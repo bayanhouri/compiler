@@ -3,7 +3,6 @@ lexer grammar MiniJS;
 tokens {
     STRING,
     TEMPLATE_STRING,
-    BLOCK_COMMENT,
     UNTERMINATED_COMMENT,
     UNTERMINATED_STRING,
     UNTERMINATED_TEMPLATE
@@ -16,13 +15,13 @@ Default    : 'default' ;        Delete   : 'delete' ;    Do       : 'do' ;
 Else       : 'else' ;           Export   : 'export' ;    Extends  : 'extends' ;
 Finally    : 'finally' ;        For      : 'for' ;       Function : 'function' ;
 If         : 'if' ;             Import   : 'import' ;    In       : 'in' ;
-Instanceof : 'instanceof' ;     New    : 'new' ;         Return   : 'return' ;
+Instanceof : 'instanceof' ;     New      : 'new' ;       Return   : 'return' ;
 Super      : 'super' ;          Switch   : 'switch' ;    This     : 'this' ;
 Throw      : 'throw' ;          Try      : 'try' ;       Typeof   : 'typeof' ;
 Var        : 'var' ;            Void     : 'void' ;      While    : 'while' ;
-Await     : 'await' ;           Debugger  : 'debugger' ; Enum      : 'enum' ;
-With      : 'with' ;            Yield     : 'yield' ;    Let        : 'let' ;
-Boolean  : 'true' | 'false' ;   NULL      : 'null';
+Await      : 'await' ;          Debugger : 'debugger' ;  Enum     : 'enum' ;
+With       : 'with' ;           Yield    : 'yield' ;     Let      : 'let' ;
+Boolean    : 'true' | 'false' ; NULL     : 'null';
 
 
 
@@ -63,7 +62,7 @@ OptionalChaining : '?.' ;
 Arrow            : '=>' ;
 
 OpenParen    : '(' ;   CloseParen      : ')' ;    OpenBracket     : '[' ;      CloseBracket : ']' ;
-OpenBrace    : '{' ;   CloseBrace     : '}' ;
+OpenBrace    : '{' ;   CloseBrace      : '}' ;
 SemiColon    : ';' ;   Comma           : ',' ;    Dot             : '.' ;      Ellipsis : '...' ;
 Question     : '?' ;   Colon           : ':' ;
 
@@ -106,7 +105,7 @@ INVALID_NUMBER_SUFFIX
     ;
 
 LINE_COMMENT
-    : '//' ~[\r\n]*
+    : '//' ~[\r\n]* -> skip
     ;
 
 BLOCK_COMMENT_START : '/*' -> more, mode(BLOCK_COMMENT_MODE);
@@ -192,10 +191,11 @@ mode TEMPLATE_MODE;
         : '`' -> type(TEMPLATE_STRING), mode(DEFAULT_MODE)
         ;
 
-    mode BLOCK_COMMENT_MODE;
+
+mode BLOCK_COMMENT_MODE;
 
     BLOCK_COMMENT_END
-        : '*/' -> type(BLOCK_COMMENT), mode(DEFAULT_MODE)
+        : '*/' -> skip, mode(DEFAULT_MODE)
         ;
 
     BLOCK_COMMENT_TEXT
